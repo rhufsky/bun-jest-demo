@@ -1,0 +1,58 @@
+variables:
+  VERSION: 1.1
+
+default:
+  image: docker:26.1.4
+  services:
+    - name: docker:26.1.4-dind
+
+stages:
+  - test
+  - build
+  - push
+
+job_merge_test:
+  image: oven/bun:1.2.1
+  # image: node:22.12.0-alpine3.21
+  stage: test
+
+  script:
+    - echo "==========================================================="
+    - echo "Running tests..."
+    - echo "==========================================================="
+    - bun install
+    - bun run test
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"' # Run only on Merge Requests
+
+job_build:
+  stage: build
+
+  variables:
+    JOB_VAR: "A job variable"
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - docker build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$VERSION --tag $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$VERSION
+    - docker push $CI_REGISTRY_IMAGE:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mainli"' # Only allow on `main`
+    - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
+
+.job_test:
+  stage: test
+  script:
+    - echo "Running tests stage '$CI_JOB_STAGE'"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"' # Only allow on `main`
+
+.job_push:
+  stage: push
+  script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker pull $CI_REGISTRY_IMAGE:$VERSION
+    - echo "Pushing the Docker image ${FINAL_IMAGE_NAME} to the registry"
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "mainli"' # Only allow on `main`
