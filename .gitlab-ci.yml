@@ -37,8 +37,8 @@ job_build:
     - docker push $CI_REGISTRY_IMAGE:$VERSION
     - docker push $CI_REGISTRY_IMAGE:latest
   rules:
-    - if: '$CI_COMMIT_BRANCH == "mainli"' # Only allow on `main`
-    - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "main"' # Only allow on `main`
+#    - if: '$CI_PIPELINE_SOURCE != "merge_request_event"'
 
 .job_test:
   stage: test
