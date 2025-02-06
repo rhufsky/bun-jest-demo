@@ -30,6 +30,7 @@ export default function RootLayout({
       >
         <HeroUIProvider>
           <div className="border rounded p-8 m-8 shadow-xl">{children}</div>
+          For heroes only
         </HeroUIProvider>
       </body>
     </html>
