@@ -1,4 +1,4 @@
-FROM oven/bun:1.2.2 AS base
+FROM oven/bun:1.2.4 AS base
 
 # Install dependencies stage
 
