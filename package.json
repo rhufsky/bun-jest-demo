@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test-in-docker-bun": "docker run -it --rm -v $(pwd):/app -w /app oven/bun:1.2.4 sh -c 'bun -ci install && bun -ci  run test'",
-    "test-in-docker-node": "docker run -it --rm -v $(pwd):/app -w /app node:22.12.0-alpine3.21 sh -c 'npm install && npm run test'"
+    "test-in-docker-bun": "docker run -it --rm -v $(pwd):/app -w /app oven/bun:1.2.4 sh -c 'bun -ci install && bun pm trust --all  && bun -ci  run test'",
+    "test-in-docker-node": "docker run -it --rm -v $(pwd):/app -w /app node:22.14.0-alpine3.21 sh -c 'npm install && npm run test'"
   },
   "dependencies": {
     "@heroui/button": "^2.2.15",
@@ -36,8 +36,16 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.5.3",
+    "prisma": "^6.4.1",
     "tailwindcss": "^3.4.17",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"
-  }
+  },
+  "trustedDependencies": [
+    "@heroui/shared-utils",
+    "@prisma/engines",
+    "esbuild",
+    "prisma",
+    "sharp"
+  ]
 }
